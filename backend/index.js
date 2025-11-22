@@ -45,8 +45,7 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
             const vietnameseText = data[0].text;
             const result = transcriptToSiGML(
                 vietnameseText, 
-                './output_transcript.sigml',
-                './Dictionary_VSL_HamNoSys'
+                './output_transcript.sigml'
             );
             
             console.log("\n=== KẾT QUẢ MAPPING ===");
