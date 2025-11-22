@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "SignSpeak - AI Sign Language Translator",
+    "version": "1.0.0",
+    "description": "Real-time speech-to-sign language translation using AI and 3D avatar rendering",
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://*/*"
+    ],
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "cwa/*",
+                "sigml/*",
+                "avatars/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
