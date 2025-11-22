@@ -1,27 +1,34 @@
 {
     "manifest_version": 3,
-    "name": "CWA Signing Avatar",
+    "name": "VSL Sign Language Avatar",
     "version": "1.0.0",
-    "description": "CoffeeScript WebGL ARP Signing Avatar - Display sign language avatars",
-    "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "16": "icons/icon16.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
-        }
-    },
+    "description": "Vietnamese Sign Language Avatar with WebGL",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
         "128": "icons/icon128.png"
     },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "VSL Sign Language Avatar"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "js/content.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
     "web_accessible_resources": [
         {
             "resources": [
-                "avatars/*",
+                "popup.html",
                 "cwa/*",
-                "cwa/shaders/*",
+                "avatars/*",
                 "sigml/*"
             ],
             "matches": [
@@ -29,5 +36,7 @@
             ]
         }
     ],
-    "permissions": []
+    "permissions": [
+        "activeTab"
+    ]
 }

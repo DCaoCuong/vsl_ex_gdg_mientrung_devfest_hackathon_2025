@@ -36,7 +36,7 @@
     {
       "description": "Default if client configuration is missing or restricted",
       "width": 384,
-      "height": 320,
+      "height": 310,
       "avList": "avs",
       "initAv": "luna",
       "initCamera": [
