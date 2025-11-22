@@ -1,9 +1,8 @@
-// get subtitle
-
+// get transcript from youtube-transcript.io API
 fetch("https://www.youtube-transcript.io/api/transcripts", {
     method: "POST",
     headers: {
-        "Authorization": "Basic 68fcf1e1373ba5a907ba8c4b",
+        "Authorization": "Basic " + process.env.API_TOKEN_YOUTUBE_TRANS,
         "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -15,10 +14,7 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
 
-
-// translate text to SiGML
-
-
+// mapping the trancscript (text) to SiGML (translate text to SiGML)
 
 
 // response xml to extension
