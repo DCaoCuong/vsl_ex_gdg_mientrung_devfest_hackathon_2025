@@ -9,16 +9,16 @@ function waitAndClickPlay(btnPlay, maxRetries = 20) {
 
         // Kiểm tra xem nút có đang bị disable không
         if (!btnPlay.disabled) {
-            console.log("Nút Play đã sẵn sàng -> Click ngay!");
             btnPlay.click();
+            console.log("Nút Play đã click");
             clearInterval(intervalId); // Dừng kiểm tra
         } else {
-            console.log(`Nút Play đang bị khóa (đang stop bài cũ)... Thử lại lần ${attempts}`);
+            // console.log(`Nút Play đang bị khóa (đang stop bài cũ)... Thử lại lần ${attempts}`);
         }
 
         // Nếu thử quá nhiều lần (ví dụ 20 lần * 200ms = 4 giây) mà vẫn khóa thì bỏ cuộc
         if (attempts >= maxRetries) {
-            console.error("Timeout: Không thể click nút Play (Avatar bị kẹt trạng thái).");
+            console.error("Timeout: Không thể click nút Play (Đã thử 20 lần).");
             clearInterval(intervalId);
         }
     }, 200); // Kiểm tra mỗi 200ms
@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // Chúng ta đợi một chút (100ms) để lệnh Stop bắt đầu, sau đó mới polling
             setTimeout(() => {
                 waitAndClickPlay(btnPlay);
-            }, 100);
+            }, 200);
 
             sendResponse({ status: "Pending Play" });
         } else {
