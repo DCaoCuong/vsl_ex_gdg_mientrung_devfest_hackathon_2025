@@ -9,18 +9,45 @@ const { transcriptToSiGML } = require('./transcriptToSiGML');
 const app = express();
 const PORT = 8080;
 const API_TOKEN = process.env.API_TOKEN_YOUTUBE_TRANS;
+const OUTPUT_DIR = './sigmlTranslated';
+
+if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR);
+}
 
 app.use(cors()); // Cho phép gọi API từ mọi nguồn
 app.use(express.json());
 
 app.get('/backend/text-to-sign/:videoId', async (req, res) => {
     const videoId = req.params.videoId; // Lấy videoID từ URL
-    const outputFilePath = './output_transcript.sigml';
+
+    const filePath = path.join(OUTPUT_DIR, `${videoId}.sigml`);
+
+    // const outputFilePath = './output_transcript.sigml';
 
     console.log(`\n=== Đang xử lý Video ID: ${videoId} ===`);
 
     try {
-        // 1. Gọi Youtube Transcript API
+
+        if (fs.existsSync(filePath)) {
+            console.log(`✓ File cache đã tồn tại: ${filePath}`);
+            console.log("--> Đang đọc từ cache...");
+
+            fs.readFile(filePath, 'utf8', (err, xmlData) => {
+                if (err) {
+                    console.error("Lỗi đọc file cache:", err);
+                    return res.status(500).json({ error: "Lỗi khi đọc file cache." });
+                }
+                res.set('Content-Type', 'application/xml');
+                return res.send(xmlData);
+            });
+            return; // Kết thúc hàm, không chạy phần dưới nữa
+        }
+
+        // NẾU CHƯA CÓ FILE: Gọi Youtube API
+        console.log("File chưa tồn tại. Đang tải...");
+
+        // Gọi Youtube Transcript API
         const ytResponse = await fetch("https://www.youtube-transcript.io/api/transcripts", {
             method: "POST",
             headers: {
@@ -38,8 +65,8 @@ app.get('/backend/text-to-sign/:videoId', async (req, res) => {
 
         let textVideo = data[0];
 
-        // 2. Dịch sang Tiếng Việt
-        console.log("--> Đang dịch sang Tiếng Việt...");
+        //  Dịch sang Tiếng Việt
+        console.log("- Đang dịch sang Tiếng Việt...");
         const transRes = await translate(textVideo.text, { to: 'vi' });
         textVideo.text = transRes.text;
 
@@ -58,16 +85,16 @@ app.get('/backend/text-to-sign/:videoId', async (req, res) => {
         }
 
         // 3. Mapping Transcript to SiGML
-        console.log("--> Đang tạo file SiGML...");
+        console.log("- Đang tạo file SiGML...");
         const result = transcriptToSiGML(
             textVideo.text,
-            outputFilePath
+            filePath
         );
 
-        console.log(`✓ Tạo file thành công: ${result.outputPath}`);
+        console.log(`Tạo file thành công: ${result.outputPath}`);
 
         // 4. Đọc file SiGML vừa tạo và trả về Client
-        fs.readFile(outputFilePath, 'utf8', (err, xmlData) => {
+        fs.readFile(filePath, 'utf8', (err, xmlData) => {
             if (err) {
                 console.error("Lỗi đọc file:", err);
                 return res.status(500).json({ error: "Lỗi khi đọc file SiGML đã tạo." });

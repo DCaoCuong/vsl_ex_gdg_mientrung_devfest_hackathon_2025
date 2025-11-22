@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const path = require('path');
 /**
  * Load pre-generated SiGML dictionary từ file output_hard.sigml
  * @returns {Object} Map từ gloss -> SiGML block
@@ -7,17 +7,17 @@ const fs = require('fs');
 function loadSiGMLDictionary(sigmlPath = './output_hard.sigml') {
     const content = fs.readFileSync(sigmlPath, 'utf8');
     const dictionary = {};
-    
+
     // Parse XML để tìm tất cả <hns_sign> blocks
     const signRegex = /<hns_sign gloss="([^"]+)">[\s\S]*?<\/hns_sign>/g;
     let match;
-    
+
     while ((match = signRegex.exec(content)) !== null) {
         const gloss = match[0].match(/gloss="([^"]+)"/)[1].toLowerCase();
         const signBlock = match[0];
         dictionary[gloss] = signBlock;
     }
-    
+
     return dictionary;
 }
 
@@ -29,7 +29,7 @@ function loadDictionary(dictionaryPath = './Dictionary_VSL_HamNoSys') {
     const content = fs.readFileSync(dictionaryPath, 'utf8');
     const lines = content.trim().split('\n');
     const dictionary = {};
-    
+
     for (let line of lines) {
         const parts = line.split('\t');
         if (parts.length > 0) {
@@ -38,7 +38,7 @@ function loadDictionary(dictionaryPath = './Dictionary_VSL_HamNoSys') {
             dictionary[word] = hamnosys;
         }
     }
-    
+
     return dictionary;
 }
 
@@ -55,9 +55,9 @@ function processTranscript(transcript, sigmlDictionary) {
         .replace(/[.,!?;:]/g, ' ') // Loại bỏ dấu câu
         .split(/\s+/) // Tách theo khoảng trắng
         .filter(word => word.length > 0);
-    
+
     const result = [];
-    
+
     for (let word of words) {
         // Tra cứu từ trong SiGML dictionary
         if (sigmlDictionary[word]) {
@@ -84,7 +84,7 @@ function processTranscript(transcript, sigmlDictionary) {
 function generateSiGML(mappedWords) {
     let sigmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sigmlContent += '<sigml>\n';
-    
+
     for (let item of mappedWords) {
         if (item.found && item.sigmlBlock) {
             // Thêm indent cho đẹp
@@ -95,7 +95,7 @@ function generateSiGML(mappedWords) {
             sigmlContent += indentedBlock + '\n';
         }
     }
-    
+
     sigmlContent += '</sigml>';
     return sigmlContent;
 }
@@ -106,23 +106,31 @@ function generateSiGML(mappedWords) {
  * @param {string} outputPath - Đường dẫn file output SiGML
  * @param {string} sigmlDictionaryPath - Đường dẫn pre-generated SiGML dictionary
  */
-function transcriptToSiGML(transcript, outputPath = './output_transcript.sigml', sigmlDictionaryPath = './output_hard.sigml') {
+function transcriptToSiGML(transcript, outputPath, sigmlDictionaryPath = './output_hard.sigml') {
+    if (!outputPath) outputPath = './output_transcript.sigml';
+
     console.log('Step 1: Load SiGML dictionary...');
     const sigmlDictionary = loadSiGMLDictionary(sigmlDictionaryPath);
     console.log(`Loaded ${Object.keys(sigmlDictionary).length} signs from SiGML dictionary`);
-    
+
     console.log('\nStep 2: Process transcript...');
     const mappedWords = processTranscript(transcript, sigmlDictionary);
     const foundWords = mappedWords.filter(w => w.found).length;
     console.log(`Mapped ${foundWords}/${mappedWords.length} words`);
-    
+
     console.log('\nStep 3: Assemble SiGML from pre-generated blocks...');
     const sigmlContent = generateSiGML(mappedWords);
-    
+
     console.log('\nStep 4: Write to file...');
+
+    const dir = path.dirname(outputPath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
     fs.writeFileSync(outputPath, sigmlContent, 'utf8');
-    console.log(`✓ SiGML saved to: ${outputPath}`);
-    
+    console.log(`SiGML saved to: ${outputPath}`);
+
     return {
         totalWords: mappedWords.length,
         foundWords: foundWords,

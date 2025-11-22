@@ -186,5 +186,34 @@
                 createPanel();
             }
         }
+
+        // Xử lý message playSiGML từ background script
+        if (request.action === 'playSiGML') {
+            try {
+                // Kiểm tra xem panel đã được tạo chưa
+                const panel = document.getElementById('cwasa-panel');
+                if (!panel) {
+                    createPanel();
+                }
+
+                // Gửi message tới iframe popup để thực thi playSiGMLText
+                const iframe = document.querySelector('#cwasa-panel iframe');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        action: 'playSiGML',
+                        xmlData: request.xmlData
+                    }, '*');
+                    console.log('SiGML data sent to popup iframe');
+                    sendResponse({ success: true });
+                } else {
+                    console.error('Popup iframe not found');
+                    sendResponse({ success: false, error: 'Iframe not found' });
+                }
+            } catch (error) {
+                console.error('Error handling playSiGML:', error);
+                sendResponse({ success: false, error: error.message });
+            }
+            return true;
+        }
     });
 })();
