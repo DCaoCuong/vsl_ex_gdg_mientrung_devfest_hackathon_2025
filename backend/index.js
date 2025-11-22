@@ -31,7 +31,7 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
             const res = await translate(textVideo.text, { to: 'vi' });
             textVideo.text = res.text;
 
-            if (res.from.language.iso === 'vi') {
+            if (res.from && res.from.language && res.from.language.iso === 'vi') {
                 console.log("Văn bản gốc đã là Tiếng Việt.");
                 console.log("Nội dung:", textVideo);
             }
@@ -39,25 +39,41 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
             if (textVideo.tracks && textVideo.tracks.length > 0) {
                 for (let i = 0; i < textVideo.tracks.length; i++) {
                     const track = textVideo.tracks[i];
-            
+
                     track.language = "Vietnamese (Translated)";
 
                     if (track.transcript && track.transcript.length > 0) {
-                    // Dịch song song tất cả các dòng
-                    await Promise.all(track.transcript.map(async (line) => {
-                        try {
-                            const resLine = await translate(line.text, { to: 'vi' });
-                            line.text = resLine.text;
-                        } catch (err) {
-                        }
-                    }));
-                }
+                        // Dịch song song tất cả các dòng
+                        await Promise.all(track.transcript.map(async (line) => {
+                            try {
+                                const resLine = await translate(line.text, { to: 'vi' });
+                                line.text = resLine.text;
+                            } catch (err) {
+                                // ignore line translation errors
+                            }
+                        }));
+                    }
                 }
             }
 
             console.log("Ket qua")
             console.log(JSON.stringify(data, null, 2));
 
+            //mapping transcript to SiGML
+            console.log("\n=== BẮT ĐẦU MAPPING TRANSCRIPT TO SIGML ===");
+            const vietnameseText = data[0].text;
+            const result = transcriptToSiGML(
+                vietnameseText, 
+                './output_transcript.sigml'
+            );
+            
+            console.log("\n=== KẾT QUẢ MAPPING ===");
+            console.log(`✓ Tổng số từ: ${result.totalWords}`);
+            console.log(`✓ Tìm thấy trong dictionary: ${result.foundWords}`);
+            console.log(`✗ Từ không tìm thấy (${result.missingWords.length}):`, result.missingWords);
+            console.log(`✓ File SiGML: ${result.outputPath}`);
+
+            console.log("Nội dung:", textVideo);
         } catch (err) {
             console.error("Lỗi khi gọi Google Translate:", err);
         }
@@ -65,7 +81,7 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
     .catch(error => console.error('Error:', error));
 
 
-// translate text to SiGML
+
 
 
 
