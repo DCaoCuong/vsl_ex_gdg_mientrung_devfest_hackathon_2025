@@ -12,6 +12,9 @@
         "default_popup": "popup.html",
         "default_title": "VSL Sign Language Avatar"
     },
+    "background": {
+        "service_worker": "js/background.js"
+    },
     "content_scripts": [
         {
             "matches": [
@@ -37,6 +40,11 @@
         }
     ],
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "http://localhost:8080/*",
+        "https://www.youtube.com/*"
     ]
 }
