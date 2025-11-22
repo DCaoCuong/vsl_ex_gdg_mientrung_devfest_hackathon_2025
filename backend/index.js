@@ -3,6 +3,7 @@ const API_TOKEN = process.env.API_TOKEN_YOUTUBE_TRANS;
 const translate = require('@iamtraction/google-translate');
 const { transcriptToSiGML } = require('./transcriptToSiGML');
 
+
 /**
  * @param {string} videoId - YouTube video ID
  * @returns {Promise<Object>} Transcript data from API
