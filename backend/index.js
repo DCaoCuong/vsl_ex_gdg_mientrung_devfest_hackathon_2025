@@ -1,6 +1,3 @@
-require('dotenv').config();
-const API_TOKEN = process.env.API_TOKEN_YOUTUBE_TRANS;
-
 // get transcript from youtube-transcript.io API
 require('dotenv').config();
 const translate = require('@iamtraction/google-translate');
@@ -10,15 +7,12 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
     method: "POST",
     headers: {
         "Authorization": "Basic " + process.env.API_TOKEN_YOUTUBE_TRANS,
-
-// get subtitle
-
-
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     },
     body: JSON.stringify({
         ids: ["jNQXAC9IVRw"],
     })
+    // get subtitle
 })
     .then(response => response.json())
     .then(async (data) => {
@@ -43,18 +37,26 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
             } else {
                 console.log(`Phát hiện ngôn ngữ gốc: ${res.from.language.iso}`);
                 console.log("------------------------------------------------");
-
                 console.log(data);
-
             }
 
-    } catch (err) {
-        console.error("Lỗi khi gọi Google Translate:", err);
-    }
-})
-.catch(error => console.error('Error:', error));
+            //mapping transcript to SiGML
+            console.log("\n=== BẮT ĐẦU MAPPING TRANSCRIPT TO SIGML ===");
+            const vietnameseText = data[0].text;
+            const result = transcriptToSiGML(
+                vietnameseText, 
+                './output_transcript.sigml',
+                './Dictionary_VSL_HamNoSys'
+            );
+            
+            console.log("\n=== KẾT QUẢ MAPPING ===");
+            console.log(`✓ Tổng số từ: ${result.totalWords}`);
+            console.log(`✓ Tìm thấy trong dictionary: ${result.foundWords}`);
+            console.log(`✗ Từ không tìm thấy (${result.missingWords.length}):`, result.missingWords);
+            console.log(`✓ File SiGML: ${result.outputPath}`);
 
-// mapping the trancscript (text) to SiGML (translate text to SiGML)
-
-
-// response xml to extension
+        } catch (err) {
+            console.error("Lỗi khi gọi Google Translate:", err);
+        }
+    })
+    .catch(error => console.error('Error:', error));
