@@ -1,3 +1,6 @@
+require('dotenv').config();
+const API_TOKEN = process.env.API_TOKEN;
+
 // get subtitle
 
 fetch("https://www.youtube-transcript.io/api/transcripts", {
