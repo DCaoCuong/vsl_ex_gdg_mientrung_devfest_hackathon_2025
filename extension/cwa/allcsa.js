@@ -53211,3 +53211,13 @@ ${mkparam("avatar.fps", cfg.animgenFPS)}
     // (end)
 }).call(this);
 // --------  END  --------
+
+window.addEventListener('load', function () {
+    // Kiểm tra xem CWASA đã tồn tại chưa để tránh lỗi
+    if (typeof CWASA !== 'undefined' && typeof CWASA.init === 'function') {
+        console.log("Đang khởi tạo CWASA...");
+        CWASA.init();
+    } else {
+        console.error("Không tìm thấy thư viện CWASA!");
+    }
+});
