@@ -1,5 +1,18 @@
 // background.js
 
+// Hàm trích xuất videoID từ URL YouTube
+function extractVideoID(url) {
+    try {
+        const urlObj = new URL(url);
+        return urlObj.searchParams.get('v');
+    } catch (error) {
+        console.error('Error extracting video ID:', error);
+        return null;
+    }
+}
+
+
+
 // Nhiệm vụ 1: Lấy videoID từ URL YouTube và gọi API
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     // Kiểm tra khi trang đã load xong và là trang YouTube
@@ -20,16 +33,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 
-// Hàm trích xuất videoID từ URL YouTube
-function extractVideoID(url) {
-    try {
-        const urlObj = new URL(url);
-        return urlObj.searchParams.get('v');
-    } catch (error) {
-        console.error('Error extracting video ID:', error);
-        return null;
-    }
-}
 
 // Nhiệm vụ 2: Gọi API và xử lý dữ liệu XML
 async function fetchSiGMLData(videoID, tabId) {
@@ -60,17 +63,6 @@ async function fetchSiGMLData(videoID, tabId) {
 
     } catch (error) {
         console.error('Error fetching SiGML data:', error);
-    }
-}
-
-// Lắng nghe tin nhắn từ content script hoặc popup (nếu cần)
-function extractVideoID(url) {
-    try {
-        const urlObj = new URL(url);
-        return urlObj.searchParams.get('v');
-    } catch (error) {
-        console.error('Error extracting video ID:', error);
-        return null;
     }
 }
 

@@ -3,11 +3,12 @@
 (function () {
     'use strict';
 
+    let panelElement = null;
+
     // Create draggable panel
     function createPanel() {
-        // Check if panel already exists
-        if (document.getElementById('cwasa-panel')) {
-            return;
+        if (panelElement) {
+            return panelElement;
         }
 
         // Create container - kích thước 386x322px (bằng với CWASAPanel)
@@ -24,7 +25,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 999999;
-            display: flex;
+            display: none;
             flex-direction: column;
             font-family: sans-serif;
             overflow: hidden;
@@ -81,14 +82,38 @@
         panel.appendChild(header);
         panel.appendChild(iframe);
         document.body.appendChild(panel);
+        panelElement = panel;
 
         // Make draggable
         makeDraggable(panel, header);
 
         // Close button
-        document.getElementById('cwasa-close').addEventListener('click', () => {
-            panel.remove();
-        });
+        const closeButton = document.getElementById('cwasa-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                hidePanel();
+            });
+        }
+
+        return panelElement;
+    }
+
+    function showPanel() {
+        const panel = createPanel();
+        panel.style.display = 'flex';
+        return panel;
+    }
+
+    function hidePanel() {
+        if (panelElement) {
+            panelElement.style.display = 'none';
+        }
+    }
+
+    function togglePanelVisibility() {
+        const panel = createPanel();
+        const isHidden = panel.style.display === 'none' || panel.style.display === '';
+        panel.style.display = isHidden ? 'flex' : 'none';
     }
 
     // Draggable functionality
@@ -157,47 +182,37 @@
             button.style.transform = 'scale(1)';
         });
 
-        button.addEventListener('click', () => {
-            const panel = document.getElementById('cwasa-panel');
-            if (panel) {
-                panel.remove();
-            } else {
-                createPanel();
-            }
-        });
+        button.addEventListener('click', togglePanelVisibility);
 
         document.body.appendChild(button);
     }
 
     // Initialize when page loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', createToggleButton);
-    } else {
+    function init() {
+        createPanel();
         createToggleButton();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 
     // Listen for messages from extension
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'togglePanel') {
-            const panel = document.getElementById('cwasa-panel');
-            if (panel) {
-                panel.remove();
-            } else {
-                createPanel();
-            }
+            togglePanelVisibility();
         }
 
         // Xử lý message playSiGML từ background script
         if (request.action === 'playSiGML') {
             try {
                 // Kiểm tra xem panel đã được tạo chưa
-                const panel = document.getElementById('cwasa-panel');
-                if (!panel) {
-                    createPanel();
-                }
+                const panel = showPanel();
 
                 // Gửi message tới iframe popup để thực thi playSiGMLText
-                const iframe = document.querySelector('#cwasa-panel iframe');
+                const iframe = panel.querySelector('iframe');
                 if (iframe && iframe.contentWindow) {
                     iframe.contentWindow.postMessage({
                         action: 'playSiGML',
