@@ -1,3 +1,6 @@
+require('dotenv').config();
+const API_TOKEN = process.env.API_TOKEN;
+
 // get subtitle
 const translate = require('@iamtraction/google-translate');
 
