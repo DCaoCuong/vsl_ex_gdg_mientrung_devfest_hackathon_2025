@@ -5296,7 +5296,7 @@ this.getCWAEnv().add(new pp, "Pretty");
                     // Default avatar panel settings: background set to null defaults to transparent
                     defaultAv = {
                         width: 384,
-                        height: 320,
+                        height: 310,
                         avList: "avs",
                         initAv: "luna",
                         background: null,
