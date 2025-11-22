@@ -1,13 +1,16 @@
+
+// get transcript from youtube-transcript.io API
+fetch("https://www.youtube-transcript.io/api/transcripts", {
+    method: "POST",
+    headers: {
+        "Authorization": "Basic " + process.env.API_TOKEN_YOUTUBE_TRANS,
+      
 require('dotenv').config();
 const API_TOKEN = process.env.API_TOKEN;
 
 // get subtitle
 const translate = require('@iamtraction/google-translate');
 
-fetch("https://www.youtube-transcript.io/api/transcripts", {
-    method: "POST",
-    headers: {
-        "Authorization": "Basic 69212a63b48c14d1940bf387", 
         "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -48,10 +51,7 @@ fetch("https://www.youtube-transcript.io/api/transcripts", {
 })
 .catch(error => console.error('Error:', error));
 
-
-// translate text to SiGML
-
-
+// mapping the trancscript (text) to SiGML (translate text to SiGML)
 
 
 // response xml to extension
