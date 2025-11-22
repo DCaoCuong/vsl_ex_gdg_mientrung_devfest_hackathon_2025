@@ -7,7 +7,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         const videoID = extractVideoID(tab.url);
 
         if (videoID) {
-            console.log('Phát hiện Video ID:', videoID);
+            console.log('Phát hiện Video ID mới:', videoID);
+
+            chrome.runtime.sendMessage({ action: "STOP_AVATAR" }, () => {
+                // Bỏ qua lỗi lastError nếu popup đóng (vì đóng thì không cần stop)
+                if (chrome.runtime.lastError) { }
+            });
+
             // Gọi API để lấy dữ liệu XML
             fetchSiGMLData(videoID);
         }
