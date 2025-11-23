@@ -83,3 +83,5 @@
 18. Create Service
 
 - Click Create to start deployment.
+
+19. Add api key youtube-transcript
