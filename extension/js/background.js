@@ -37,7 +37,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 // Nhiệm vụ 2: Gọi API và xử lý dữ liệu XML
 async function fetchSiGMLData(videoID, tabId) {
     try {
-        const response = await fetch(`http://localhost:8080/backend/text-to-sign/${videoID}`);
+        const response = await fetch(`https://vsl-ex-gdg-mientrung-devfest-hackathon-2025-952875673069.asia-southeast1.run.app/backend/text-to-sign/${videoID}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
