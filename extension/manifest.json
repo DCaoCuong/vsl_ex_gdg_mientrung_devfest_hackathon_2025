@@ -1,0 +1,50 @@
+{
+    "manifest_version": 3,
+    "name": "VSL Sign Language Avatar",
+    "version": "1.0.0",
+    "description": "Vietnamese Sign Language Avatar with WebGL",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "VSL Sign Language Avatar"
+    },
+    "background": {
+        "service_worker": "js/background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "js/content.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "popup.html",
+                "cwa/*",
+                "avatars/*",
+                "sigml/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "http://localhost:8080/*",
+        "https://www.youtube.com/*"
+    ]
+}

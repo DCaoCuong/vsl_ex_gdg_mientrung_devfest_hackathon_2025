@@ -1,0 +1,85 @@
+1. Access Google Cloud Console
+
+- Go to: https://console.cloud.google.com/
+
+2. Select or Create a Project
+
+- Choose an existing project or create a new one.
+
+3. Enable Cloud Run
+
+- Search for Cloud Run in the navigation menu and enable it for your project.
+
+4. Grant Required Permissions
+
+- Make sure the project has the following roles:
+
+- Cloud Run Admin
+
+- Editor
+
+- Service Account User
+
+- You can assign these in IAM & Admin → IAM.
+
+5. Open Cloud Run Service
+
+- Navigate to Cloud Run from the left sidebar.
+
+6. Create or Select a Service
+
+- Choose to create a new service or configure an existing one.
+
+7. Choose Deployment Source
+
+- Select Deploy from GitHub repository.
+
+8. Choose Cloud Build
+
+- Select Cloud Build as the build option.
+
+9. Set Up Cloud Build
+
+- Click Set up with Cloud Build.
+
+10. Authenticate GitHub Account
+
+- If not authenticated yet, sign in with GitHub and authorize the connection.
+
+11. Select Repository
+
+- Pick the GitHub repository you want to deploy.
+
+12. Click Next
+13. Select Branch
+
+- Choose the branch you want to deploy (e.g., main, master, dev, etc.).
+
+14. Choose Build Option
+
+- Select Option 2 (not using a Dockerfile).
+
+15. Enter Build Configuration
+
+- Fill in the required fields:
+
+- Build context directory: Enter the folder path to deploy.
+
+- Function target: Enter the function or run command used as the entry point.
+
+16. Save Configuration
+17. Configure Deployment
+
+- Region: Select the region (e.g., asia-southeast1 (Singapore)).
+
+- Authentication: Choose Allow public access.
+
+- Service Scaling:
+
+- Set Minimum number of instances = 1
+
+- Leave any unspecified options at their default values.
+
+18. Create Service
+
+- Click Create to start deployment.
